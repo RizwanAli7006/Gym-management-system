@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Building2, GitBranch, Users, Dumbbell, CreditCard } from "lucide-react";
 
-import useAuth from "../../hooks/useAuth";
+import useAuth from "../../hooks/useAuth.js";
 import MotionPage from "../../components/common/MotionPage.jsx";
 import {
   PageHeader,
@@ -11,8 +11,8 @@ import {
   DataTable,
   Loading,
   EmptyState,
-} from "../../components/ui";
-import { getDashboard } from "../../services/dashboardService";
+} from "../../components/ui/index.js";
+import { getDashboard } from "../../services/dashboardService.js";
 
 const money = (x) => `Rs ${Number(x || 0).toLocaleString()}`;
 

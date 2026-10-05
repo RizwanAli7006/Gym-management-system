@@ -2,6 +2,8 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
+import path from "path";
+import { fileURLToPath } from "url";
 
 import connectDB from "./src/config/db.js";
 
@@ -22,6 +24,9 @@ dotenv.config();
 const app = express();
 
 const PORT = process.env.PORT || 5000;
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 app.use(
   cors({
@@ -69,11 +74,19 @@ app.use("/api/payments", paymentRoutes);
 
 app.use("/api/attendance", attendanceRoutes);
 
-app.use((req, res) => {
-  res.status(404).json({
-    success: false,
-    message: "API route not found",
-  });
+const frontendPath = path.join(__dirname, "frontend", "dist");
+
+app.use(express.static(frontendPath));
+
+app.use((req, res, next) => {
+  if (req.path.startsWith("/api/")) {
+    return res.status(404).json({
+      success: false,
+      message: "API route not found",
+    });
+  }
+
+  res.sendFile(path.join(frontendPath, "index.html"));
 });
 
 app.use((error, req, res, next) => {
@@ -93,11 +106,12 @@ const startServer = async () => {
       console.log("=================================");
       console.log("MongoDB connected successfully");
       console.log(
-        `Gym Management API running on http://localhost:${PORT}`
+        `Gym Management System running on http://localhost:${PORT}`
       );
       console.log(
         `Health Check: http://localhost:${PORT}/api/health`
       );
+      console.log("Frontend build:", frontendPath);
       console.log("=================================");
     });
   } catch (error) {
